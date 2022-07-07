@@ -1,0 +1,3 @@
+[submodule "third_party/golioth-esp-idf-sdk"]
+	path = third_party/golioth-esp-idf-sdk
+	url = https://github.com/golioth/golioth-esp-idf-sdk.git
