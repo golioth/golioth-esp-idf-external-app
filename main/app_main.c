@@ -13,6 +13,14 @@
 #include "golioth.h"
 
 #define TAG "golioth_example"
+
+static void on_client_event(golioth_client_t client, golioth_client_event_t event, void* arg) {
+    ESP_LOGI(
+            TAG,
+            "Golioth client %s",
+            event == GOLIOTH_CLIENT_EVENT_CONNECTED ? "connected" : "disconnected");
+}
+
 void app_main(void) {
     nvs_init();
     shell_start();
@@ -29,9 +37,22 @@ void app_main(void) {
     wifi_init(nvs_read_wifi_ssid(), nvs_read_wifi_password());
     wifi_wait_for_connected();
 
-    golioth_client_t client =
-            golioth_client_create(nvs_read_golioth_psk_id(), nvs_read_golioth_psk());
+    const char* psk_id = nvs_read_golioth_psk_id();
+    const char* psk = nvs_read_golioth_psk();
+
+    golioth_client_config_t config = {
+            .credentials = {
+                    .auth_type = GOLIOTH_TLS_AUTH_TYPE_PSK,
+                    .psk = {
+                            .psk_id = psk_id,
+                            .psk_id_len = strlen(psk_id),
+                            .psk = psk,
+                            .psk_len = strlen(psk),
+                    }}};
+    golioth_client_t client = golioth_client_create(&config);
     assert(client);
+
+    golioth_client_register_event_callback(client, on_client_event, NULL);
 
     int32_t iteration = 0;
     while (1) {
