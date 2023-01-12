@@ -14,4 +14,5 @@ idf_component_register(
         "json"
         "driver"
         "esp_hw_support"
+        "esp_wifi"
 )

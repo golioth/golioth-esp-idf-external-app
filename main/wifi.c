@@ -29,8 +29,11 @@ static int s_retry_num = 0;
 const char* _ssid;
 const char* _password;
 
-static void
-event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+static void event_handler(
+        void* arg,
+        esp_event_base_t event_base,
+        int32_t event_id,
+        void* event_data) {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         esp_wifi_connect();
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
@@ -55,6 +58,9 @@ void wifi_init(const char* ssid, const char* password) {
     _ssid = ssid;
     _password = password;
 
+    // wifi is pretty chatty during initialization, so reduce the log level to warn
+    esp_log_level_set("wifi", ESP_LOG_WARN);
+
     s_wifi_event_group = xEventGroupCreate();
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -69,8 +75,8 @@ void wifi_init(const char* ssid, const char* password) {
 
     wifi_config_t wifi_config = {};
     wifi_config.sta.threshold.authmode = WIFI_AUTH_WPA2_PSK;
-    strncpy((char*)wifi_config.sta.ssid, ssid, sizeof(wifi_config.sta.ssid));
-    strncpy((char*)wifi_config.sta.password, password, sizeof(wifi_config.sta.password));
+    strncpy((char*)wifi_config.sta.ssid, ssid, sizeof(wifi_config.sta.ssid) - 1);
+    strncpy((char*)wifi_config.sta.password, password, sizeof(wifi_config.sta.password) - 1);
     esp_wifi_set_config(WIFI_IF_STA, &wifi_config);
 
     ESP_ERROR_CHECK(esp_wifi_start());

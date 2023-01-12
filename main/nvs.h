@@ -5,6 +5,13 @@
  */
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdlib.h>
+#include <stdbool.h>
+
 // Namespace to use for NVS keys. Can be anything.
 #define NVS_NAMESPACE "example"
 
@@ -29,3 +36,7 @@ bool nvs_write_str(const char* key, const char* str);
 bool nvs_erase_str(const char* key);
 
 bool nvs_credentials_are_set(void);
+
+#ifdef __cplusplus
+}
+#endif

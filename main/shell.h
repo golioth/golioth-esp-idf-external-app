@@ -5,6 +5,10 @@
  */
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "esp_console.h"
 
 // Create task that will run the shell command-line interface.
@@ -15,3 +19,10 @@ void shell_start(void);
 
 // Register a custom shell command
 void shell_register_command(const esp_console_cmd_t* cmd);
+
+// Execute a line/command in the shell
+void shell_input_line(const char* line, size_t line_len);
+
+#ifdef __cplusplus
+}
+#endif
